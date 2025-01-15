@@ -1,0 +1,12 @@
+app = "$HEROKU_APP_NAME"
+url = "$HEROKU_APP_DEFAULT_DOMAIN_NAME"
+path = "."
+
+[id]
+name = "local"
+provider = "local"
+iss = "$HEROKU_APP_DEFAULT_DOMAIN_NAME"
+secret = "$FACTOR_SECRET"
+sub = "local"
+
+[id.targets]

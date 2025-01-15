@@ -1,0 +1,9 @@
+#!/bin/sh
+
+# this pack is valid for apps with a Procfile in the root
+if [ -f $1/Procfile ]; then
+  echo "Factor Buildpack"
+  exit 0
+else
+  exit 1
+fi
