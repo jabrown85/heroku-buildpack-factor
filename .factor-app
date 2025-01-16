@@ -5,7 +5,6 @@ path = "."
 [id]
 name = "local"
 provider = "local"
-iss = "$HEROKU_APP_DEFAULT_DOMAIN_NAME"
 secret = "$FACTOR_SECRET"
 sub = "local"
 
