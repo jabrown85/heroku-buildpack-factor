@@ -6,6 +6,6 @@ path = "."
 name = "local"
 provider = "local"
 secret = "$FACTOR_SECRET"
-sub = "local"
+sub = "$HEROKU_APP_NAME"
 
 [id.targets]
