@@ -1,21 +1,23 @@
 Custom buildpack: Factor
 =======================
 
-This is a [Heroku buildpack](http://devcenter.heroku.com/articles/buildpacks).
+This is a [Cloud Native Buildpack](https://buildpacks.io).
 
 Usage
 -----
 
 Example usage:
 
-    $ heroku buildpacks:add --index 2 "https://github.com/vishvananda/heroku-buildpack-factor"
+    $ git clone https://github.com/jabrown85/heroku-buildpack-factor <clone path>
 
-    $ git push heroku main
+    $ pack build -B heroku/builder:24 -b <clone path>
     ...
-    -----> Factor Buildpack app detected
-    -----> Attempting to rewrite Procfile
-           Added factor to web command:
-           web: ./factor ./start.sh
+    ===> BUILDING
+    [builder] -----> Installing Factor
+    [builder] -----> Configuring Factor
+    [builder] -----> Processing Procfile
+    [builder] Launch process configured with Factor wrapper
+    [builder] -----> Factor buildpack installation complete
 
 The buildpack will detect if your app has a `Procfile` in the root and rewrite
 the web process to use [factor](https://github.com/twelve-factor/factor) to run

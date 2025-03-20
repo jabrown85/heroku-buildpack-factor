@@ -1,9 +1,23 @@
-#!/bin/sh
+#!/bin/bash
 
-# this pack is valid for apps with a Procfile in the root
-if [ -f $1/Procfile ]; then
-  echo "Factor Buildpack"
-  exit 0
+set -eo pipefail
+
+# CNB environment variables:
+# CNB_BUILD_PLAN_PATH: Path where the build plan should be written
+
+ls -la "${PWD}"
+
+# Check for Procfile in the app directory
+if [[ -f "${PWD}/Procfile" ]]; then
+    cat > "${CNB_BUILD_PLAN_PATH}" << EOL
+[[provides]]
+name = "factor"
+
+[[requires]]
+name = "factor"
+EOL
+    echo "Factor Buildpack"
+    exit 0
 else
-  exit 1
+    exit 100
 fi

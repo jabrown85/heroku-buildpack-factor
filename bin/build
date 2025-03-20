@@ -1,0 +1,59 @@
+#!/bin/bash
+
+set -eo pipefail
+
+# CNB environment variables provide the key directories
+layers_dir=$1
+buildpack_dir="${CNB_BUILDPACK_DIR}"
+
+# Create factor layer
+factor_layer="${layers_dir}/factor"
+mkdir -p "${factor_layer}/bin"
+
+# Write layer metadata
+cat > "${factor_layer}.toml" << EOL
+[types]
+launch = true
+cache = true
+build = true
+EOL
+
+echo "-----> Installing Factor"
+cp "${buildpack_dir}/factor" "${factor_layer}/bin/"
+chmod +x "${factor_layer}/bin/factor"
+
+echo "-----> Configuring Factor"
+# Copy .factor-app to the layer instead of platform dir
+cp "${buildpack_dir}/.factor-app" "${factor_layer}/"
+
+echo "-----> Processing Procfile"
+if [ -f "${PWD}/Procfile" ]; then
+    # Get the original command from Procfile
+    original_command=$(grep "^web:" "${PWD}/Procfile" | cut -d':' -f2- | tr -d '\r' | xargs)
+    if [ -z "$original_command" ]; then
+        echo "Error: No web process found in Procfile"
+        exit 1
+    fi
+
+    # Process the command into a proper JSON array format
+    processed_command='["'${factor_layer}'/bin/factor", "run"'
+    for arg in $original_command; do
+        processed_command="${processed_command}, \"$arg\""
+    done
+    processed_command="${processed_command}]"
+
+    # Create launch.toml with the Factor-wrapped command
+    cat > "${layers_dir}/launch.toml" << EOL
+[[processes]]
+type = "web"
+command = ${processed_command}
+default = true
+EOL
+
+    echo "Launch process configured with Factor wrapper"
+else
+    echo "Error: No Procfile found"
+    exit 1
+fi
+
+echo "-----> Factor buildpack installation complete" 
